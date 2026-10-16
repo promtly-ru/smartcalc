@@ -1,0 +1,106 @@
+# Релиз: тег vX.Y.Z → сборки Windows, macOS, Android в GitHub Releases.
+# Имена файлов без версии, чтобы ссылки .../releases/latest/download/<файл> не менялись.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
+            gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
+              --title "SmartCalc ${GITHUB_REF_NAME#v}" --generate-notes
+
+  windows:
+    name: Windows
+    needs: release
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx electron-builder --win --publish never
+      - name: Upload to release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" release/SmartCalc-Setup.exe release/SmartCalc-Portable.exe --clobber
+
+  macos:
+    name: macOS
+    needs: release
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # Без сертификата Apple: ad-hoc подпись (mac.identity "-" в package.json)
+      - run: npx electron-builder --mac --publish never
+      - name: Check signature
+        run: |
+          for app in release/mac*/SmartCalc.app; do
+            echo "== $app"; codesign -dv "$app" 2>&1 | grep -E 'Signature|Identifier' || true
+          done
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" release/SmartCalc-mac-arm64.dmg release/SmartCalc-mac-x64.dmg --clobber
+
+  android:
+    name: Android
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - run: npm run build
+      - run: npx cap sync android
+      - name: Restore signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.p12"
+      - name: Build signed APK
+        working-directory: android
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/release.p12
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon --stacktrace
+      - name: Verify signature
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk SmartCalc.apk
+          APKSIGNER=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner
+          "$APKSIGNER" verify --print-certs SmartCalc.apk
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" SmartCalc.apk --clobber
