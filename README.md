@@ -8,11 +8,13 @@
 
 | Платформа | Файл |
 |---|---|
-| Windows 10/11 | [SmartCalc-Setup.exe](https://github.com/workvibecoding398-sys/smartcalc/releases/latest/download/SmartCalc-Setup.exe) · [Portable](https://github.com/workvibecoding398-sys/smartcalc/releases/latest/download/SmartCalc-Portable.exe) |
-| macOS (Apple Silicon) | [SmartCalc-mac-arm64.dmg](https://github.com/workvibecoding398-sys/smartcalc/releases/latest/download/SmartCalc-mac-arm64.dmg) |
-| macOS (Intel) | [SmartCalc-mac-x64.dmg](https://github.com/workvibecoding398-sys/smartcalc/releases/latest/download/SmartCalc-mac-x64.dmg) |
-| Android 7+ | [SmartCalc.apk](https://github.com/workvibecoding398-sys/smartcalc/releases/latest/download/SmartCalc.apk) |
-| iPhone / iPad / любой браузер | [веб-версия](https://workvibecoding398-sys.github.io/smartcalc/) → «Поделиться» → «На экран Домой» |
+| Windows 10/11 | [SmartCalc-Setup.exe](https://github.com/promtly-ru/smartcalc/releases/latest/download/SmartCalc-Setup.exe) · [Portable](https://github.com/promtly-ru/smartcalc/releases/latest/download/SmartCalc-Portable.exe) |
+| macOS (Apple Silicon) | [SmartCalc-mac-arm64.dmg](https://github.com/promtly-ru/smartcalc/releases/latest/download/SmartCalc-mac-arm64.dmg) |
+| macOS (Intel) | [SmartCalc-mac-x64.dmg](https://github.com/promtly-ru/smartcalc/releases/latest/download/SmartCalc-mac-x64.dmg) |
+| Android 7+ | [SmartCalc.apk](https://github.com/promtly-ru/smartcalc/releases/latest/download/SmartCalc.apk) |
+| iPhone / iPad / любой браузер | [веб-версия](https://promtly-ru.github.io/smartcalc/) → «Поделиться» → «На экран Домой» |
+
+Сайт разработчика: [promtly-ru.github.io](https://promtly-ru.github.io/)
 
 Приложения не подписаны платными сертификатами Apple/Microsoft, поэтому при первом запуске система может предупредить:
 
