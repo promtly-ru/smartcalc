@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+/* Тема переключается классом .dark на <html> (кнопка в приложении), а не настройкой Windows */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    /* Телефон: без увеличения по двойному тапу и без синей подсветки нажатия */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  button {
+    outline: none !important;
+  }
+  button:focus-visible {
+    outline: none !important;
+  }
+  /* Убираем стандартные белые браузерные стрелочки у полей ввода */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+/* Отступы под вырез экрана и системные панели (iPhone, Android edge-to-edge) */
+@utility safe-area {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/*
+ * Светлая тема.
+ * Компоненты свёрстаны под тёмную тему (светлый текст, белые полупрозрачные подложки).
+ * Здесь эти классы переназначаются на светлую палитру, когда на <html> нет .dark.
+ * Стили вне @layer, поэтому они перекрывают утилиты Tailwind.
+ */
+:root:not(.dark) {
+  color-scheme: light;
+
+  /* Текст */
+  .text-neutral-100,
+  .text-neutral-200 { color: var(--color-neutral-900); }
+  .text-neutral-300 { color: var(--color-neutral-700); }
+  .text-neutral-400 { color: var(--color-neutral-500); }
+  .text-emerald-300,
+  .text-emerald-400 { color: var(--color-emerald-700); }
+  .text-amber-400 { color: var(--color-amber-600); }
+  .text-sky-400 { color: var(--color-sky-600); }
+  .text-purple-400 { color: var(--color-purple-600); }
+  .text-rose-400 { color: var(--color-rose-600); }
+
+  .hover\:text-neutral-100:hover,
+  .hover\:text-neutral-200:hover { color: var(--color-neutral-900); }
+  .hover\:text-emerald-400:hover { color: var(--color-emerald-700); }
+  .hover\:text-rose-300:hover,
+  .hover\:text-rose-400:hover { color: var(--color-rose-600); }
+
+  /* Подложки: цифровые клавиши и поля — белые «карточки», служебные — серые */
+  .bg-black\/15,
+  .bg-black\/20 {
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 0 0 1px rgb(0 0 0 / 0.07);
+  }
+  .bg-black\/5 { background-color: rgb(0 0 0 / 0.035); }
+  .bg-black\/10 { background-color: rgb(0 0 0 / 0.05); }
+  .bg-black\/30 { background-color: var(--color-neutral-100); }
+  .bg-white\/5 { background-color: rgb(0 0 0 / 0.035); }
+  .bg-white\/10 { background-color: rgb(0 0 0 / 0.06); }
+  .bg-neutral-800\/60,
+  .bg-neutral-800\/80 { background-color: #fff; }
+  .bg-neutral-900\/95,
+  .bg-neutral-900\/98 { background-color: rgb(250 250 250 / 0.98); }
+
+  .hover\:bg-white\/5:hover { background-color: rgb(0 0 0 / 0.04); }
+  .hover\:bg-white\/10:hover { background-color: rgb(0 0 0 / 0.06); }
+  .hover\:bg-white\/15:hover { background-color: rgb(0 0 0 / 0.08); }
+  .hover\:bg-white\/20:hover { background-color: var(--color-neutral-100); }
+
+  /* Рамки */
+  .border-white\/5,
+  .border-white\/10 { border-color: rgb(0 0 0 / 0.08); }
+  .border-neutral-700\/30,
+  .border-neutral-700\/40,
+  .border-neutral-700\/50,
+  .border-neutral-700\/60 { border-color: rgb(0 0 0 / 0.1); }
+  .border-neutral-800,
+  .border-neutral-800\/80 { border-color: var(--color-neutral-200); }
+}
